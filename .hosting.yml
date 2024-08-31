@@ -1,0 +1,111 @@
+# Environment name
+dev:
+    # REQUIRED: The branch to re-deploy when code is pushed for this environment
+    branch: dev
+
+    # REQUIRED: An HTTP path which, when sent a GET request, will return 200 OK- this is mandatory for
+    # application load balancing.
+    health_check_path: /
+
+    # REQUIRED: The port that the container will be listening on.
+    container_port: 8050
+
+    # Optional: The path to the Dockerfile to build, from the root of the repo
+    # Default: Dockerfile
+    dockerfile: /app/Dockerfile
+
+    # # Optional: The target AWS account on which to run the container
+    # # Default: labs-sdlc-preprod
+    # # Supported range: labs-sdlc-preprod
+    # target:  
+
+    # Optional: The DNS prefix to use when determining the hosted URL.
+    # Allowed characters are a-z, 0-9 and '-'. For example: 'hello-world' is valid, but 'Hello_World' is not.
+    # Do not add environment information 'e.g. hello-dev, hello-stg' to this, as this will be done for you
+    # (e.g. DEV: my-app-dev.labs.public.inf0.net, STG: my-app.labs.public.inf0.net & my-app.labs.refinitiv.com).
+    # If the environment is 'stg', the dns prefix will be used to create a redirect for my-app.labs.refinitiv.com.
+    # To be able to use that redirect, a BANANA request has to be made (after deployment) to register a CNAME
+    # for the my-app.labs.refinitiv.com domain against the my-app.labs.public.inf0.net url that your app receives.
+    # Default: The lower-cased repository name.
+    dns_prefix: sfi-innovation-esg-core
+
+    # Optional: If true, the hosted URL will be accessible to the public internet. If false, the hosted URL will only
+    # be accessible internally on the company network (IP locked to 159.220.0.0/16) and Labs' other AWS accounts.
+    # Default: false
+    external: true
+
+    # # Optional: A list of channels and/or people to notify on success/failure.
+    # # These channels/people must be on Refinitiv Labs (corptech.slack.com).
+    # # If none are given, the commiter's email address will be looked up to a Slack user and they will be messaged.
+    # slack_channels: [ "#my-app", "#my-app-dev", "@Alice" ]
+
+    # Optional: A map of environment variables to pass into the container.
+    # These will be available to your application with the exact KEY_NAME as you specify.
+    # You should not add secret values in here, but you can add any number of additional environment variables
+    # in the Hosting UI, including secrets. Hosting UI variables override variables specified in the hosting.yml `env` map.
+    env: 
+        ENVIRONMENT: prod
+
+    # Optional: Memory reservation (in MiB) for the deployed container instance. Your container will be guaranteed access to
+    # at least this amount of memory. Beyond that amount, it will use whatever's available on its host,
+    # so it's luck of the draw how much more you'll get before getting killed with OOM
+    # Default: 128
+    # Supported range: 128-32000
+    memory: 1028
+
+    # Optional: Number of replicas of the container to run. Ensure you're concurrency safe if using >1
+    # Default: 1
+    # replicas: 2
+
+    # Optional: Lifecycle / pricing category of the host on which the service runs.
+    # on-demand is way more expensive than spot but it's much less likely to get randomly killed,
+    # so on-demand is a better choice for services you need to stay up all the time
+    # Default: spot
+    # Supported range: spot, on-demand
+    # host_lifecycle: on-demand
+
+    # Optional: The fully qualified path to where a persistent volume should be mounted on the container.
+    # Contents of this volume are not deleted when the container is updated or restarted.
+    # The volume is backed by EFS and is encrypted at rest. Each volume is namespaced according to the project and environment.
+    # Do not specify directories which may be used by the container e.g /home or /var or else your container may not start.
+    # persistent_storage_path: /mnt/store
+
+    # Optional: Specification of the desired uptime for the container.
+    # Outside this time range, the deployment will be scaled down to 0 replicas outside UK office hours.
+    # This saves cloud cost for services in development (most of them).
+    # Once you want it available 24/7 (e.g. it's being used by external, global customers), set this to "always".
+    # Default: Mon-Fri 08:00-19:00 Europe/London
+    uptime: always
+
+    # # Optional: The database to associate with this server. Database connection information will be provided by
+    # # the following environment variables:
+    # #    HS_DB_URL : The database endpoint URL
+    # #    HS_DB_PORT : The database port number
+    # #    HS_DB_USER : The database username
+    # #    HS_DB_PASSWORD : The database user's password
+    # #    HS_DB_NAME : The database name
+    # database: 
+
+    #     # REQUIRED: The size of the database in GB
+    #     # Minimum instance size is 5GB so if you specify a lesser value it will still be set to 5GB
+    #     size_gb: 5
+
+    #     # REQUIRED: The database engine to use. Supports "postgres".
+    #     engine: postgres
+
+    #     # REQUIRED: The version of the database engine to use.
+    #     engine_version: 11.10
+
+    #     # Optional: The EC2 instance class to use.
+    #     instance_class: db.t2.small
+
+    #     # Optional: The storage type
+    #     # Possible values:
+    #     #   standard -> magnetic  (default)
+    #     #   gp2      -> ssd
+    #     storage_type: standard
+
+
+    # Optional: set this to 'true' to delete the existing deployment and prevent new ones from triggering.
+    # You can re-deploy later by setting it to 'false' or removing the line
+    disabled: true
